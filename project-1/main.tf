@@ -1,39 +1,18 @@
-terraform {
-  required_version = ">= 1.5.0"
+# --- IAM Role for EC2 to access S3 ---
+module "iam_ec2_s3" {
+  source = "./modules/iam_ec2_s3"
 
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
+  env       = var.env
+  bucket_arn = module.s3.s3_bucket_arn
 }
 
-provider "aws" {
-  region = var.aws_region
-}
-
-# --- VPC ---
-module "vpc" {
-  source = "./modules/vpc"
-
-  cidr_block = var.vpc_cidr
-  env        = var.env
-}
-
-# --- EC2 ---
-module "ec2" {
-  source = "./modules/ec2"
-
+# --- Attach IAM role to EC2 ---
+resource "aws_instance" "this_with_iam" {
+  ami           = "ami-08c40ec9ead489470"
   instance_type = var.instance_type
   subnet_id     = module.vpc.public_subnet_id
-  env           = var.env
-}
 
-# --- S3 ---
-module "s3" {
-  source = "./modules/s3"
+  iam_instance_profile = module.iam_ec2_s3.instance_profile_name
 
-  bucket_name = var.bucket_name
-  env         = var.env
+  tags = { Name = "${var.env}-ec2" }
 }
