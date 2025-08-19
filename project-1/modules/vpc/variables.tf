@@ -1,7 +1,3 @@
-variable "cidr_block" {
-  type = string
-}
-
-variable "env" {
-  type = string
-}
+variable "vpc_cidr" {}
+variable "public_subnets" { type = list(string) }
+variable "private_subnets" { type = list(string) }

@@ -1,11 +1,3 @@
-variable "instance_type" {
-  type = string
-}
-
-variable "subnet_id" {
-  type = string
-}
-
-variable "env" {
-  type = string
-}
+variable "instance_type" {}
+variable "subnet_id" {}
+variable "iam_instance_profile_name" {}
